@@ -29,6 +29,8 @@ import * as ActionTypes from '../store/actionTypes';
 
 var Icon = require('react-native-vector-icons/FontAwesome');
 
+import {EventListHeaderComponent} from '../components/eventListHeaderComponent';
+
 export const EventsListView = React.createClass ({
     getInitialState() {
         return {}
@@ -63,7 +65,9 @@ export const EventsListView = React.createClass ({
                     type: ActionTypes.FETCH_ORGANIZERS_REQUEST_SUCCEED,
                     organizers: organizers
                 });
-                var query2 = new Parse.Query('Events');
+                var query2 = new Parse.Query('Events')
+                    .include('organizer')
+                    .include('location');
                 return query2.find();
             })
             .then((events) => {
@@ -71,9 +75,7 @@ export const EventsListView = React.createClass ({
                     type:ActionTypes.FETCH_EVENTS_REQUEST_SUCCEED,
                     events: events
                 });
-                this.dispatch({
-                    type: ActionTypes.FETCH_DATA_REQUEST_FINISHED
-                });
+
             }, (error) => {
                 console.log(error)
             });
@@ -95,6 +97,11 @@ export const EventsListView = React.createClass ({
             })
         });
     },
+    goToMap() {
+        this.dispatch({
+            type: ActionTypes.GO_TO_MAP_PRESSED
+        })
+    },
     itemSelected(item) {
         alert('item selected');
     },
@@ -106,6 +113,12 @@ export const EventsListView = React.createClass ({
                     <Text style={styles.itemName}>
                         {item.get('name')}
                     </Text>
+                    <Text style={{marginLeft:10}}>
+                        {item.get('organizer').get('name')}
+                    </Text>
+                    <Text style={{marginLeft:10}}>
+                        {item.get('location').get('name')}
+                    </Text>
                 </View>
             </TouchableOpacity>
         );
@@ -113,15 +126,20 @@ export const EventsListView = React.createClass ({
     render() {
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         var dataSource = ds.cloneWithRows(this.state.events);
-
+        var styleContainer = this.state.app.showSpinner ? styles.containerSpinner : styles.containerList
         return (
-            <View style={styles.container}>
+            <View style={styleContainer}>
 
                 {this.state.app.showSpinner ? (
                     <Image
                         source={require('../logo.png')} />
                 ) : (
                     <View style={styles.container}>
+                        <EventListHeaderComponent
+                            title="Milongas"
+                            onMapButtonPressed={() => this.goToMap()}
+                        />
+
                         <ListView ref="eventsList"
                                   dataSource={dataSource}
                                   enableEmptySections={true}
@@ -141,17 +159,26 @@ export const EventsListView = React.createClass ({
     }
 });
 
+/*
+
+ */
 const styles = StyleSheet.create({
-    container: {
+    containerSpinner: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
     },
+    containerList: {
+        flex: 1,
+        /*justifyContent: 'center',*/
+        /*alignItems: 'center',*/
+        backgroundColor: '#F5FCFF',
+    },
     itemContainer: {
         flex: 1,
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: 'grey',
         backgroundColor: 'honeydew',
         marginVertical: 5,
     },
@@ -159,7 +186,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'left',
-        marginLeft: 10
+        marginLeft: 10,
+        color: 'grey'
     },
       welcome: {
         fontSize: 20,

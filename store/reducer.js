@@ -19,7 +19,7 @@ function app(state=initialAppState, action) {
             return Object.assign({}, state, {
                 showSpinner: true
             });
-        case ActionTypes.FETCH_DATA_REQUEST_FINISHED:
+        case ActionTypes.FETCH_EVENTS_REQUEST_SUCCEED:
             return Object.assign({}, state, {
                 showSpinner: false
             });
@@ -27,6 +27,14 @@ function app(state=initialAppState, action) {
             return Object.assign({}, state, {
                 navigateTo: "editEventComponent",
                 currentEvent: action.event
+            });
+        case ActionTypes.BACK_TO_EVENT_LIST_VIEW:
+            return Object.assign({}, state, {
+                navigateTo: "eventsListView"
+            });
+        case ActionTypes.GO_TO_MAP_PRESSED:
+            return Object.assign({}, state, {
+                navigateTo: "eventsMapView"
             });
         default:
             return state;

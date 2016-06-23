@@ -30,6 +30,7 @@ Parse.serverURL = 'https://go-tango.herokuapp.com/parse';
 
 import {EventsListView} from './components/eventListView';
 import {EditEventComponent} from './components/editEventComponent';
+import {EventsMapView} from './components/eventMapView';
 
 var App = React.createClass ({
     getInitialState() {
@@ -57,6 +58,17 @@ var App = React.createClass ({
                 page = (
                     <EditEventComponent {...this.props} />
                 )
+                break;
+            case "eventsMapView":
+                page = (
+                    <EventsMapView {...this.props} />
+                );
+                break;
+            default:
+                page = (
+                    <EventsListView {...this.props} />
+                );
+                break;
         }
         return (
             <View style={{flex:1}}>
