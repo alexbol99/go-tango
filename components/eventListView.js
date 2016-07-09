@@ -44,7 +44,9 @@ export const EventsListView = React.createClass ({
         this.setState(nextProps.store.getState());
     },
     componentDidMount() {
-        this.fetchData();
+        if (this.state.app.needFetchData) {
+            this.fetchData();
+        }
     },
     fetchData() {
         var query = new Parse.Query('Locations');

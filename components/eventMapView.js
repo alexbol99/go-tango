@@ -47,11 +47,12 @@ export const EventsMapView = React.createClass ({
     },
     componentWillMount() {
         this.dispatch = this.props.store.dispatch;
-        //var state = this.props.store.getState();
-        //this.setState(state);
+        var events = this.props.store.getState().events;
+        this.setState({ events });
     },
     componentWillReceiveProps(nextProps) {
-        // this.setState(nextProps.store.getState());
+        var events = nextProps.store.getState().events;
+        this.setState({ events });
     },
     componentDidMount() {
     },
@@ -75,6 +76,23 @@ export const EventsMapView = React.createClass ({
                     region={this.state.region}
                     onRegionChange={this.onRegionChange}
                 >
+                    {
+                        this.state.events.map(event => {
+                            var location = event.get('location').get('geolocation');
+                            var latlng = {latitude: location.latitude,
+                                longitude: location.longitude};
+
+                            return (
+                                <MapView.Marker
+                                    key = {event.id}
+                                    coordinate={latlng}
+                                    title={event.get('name')}
+                                    description=""
+                                />
+                            )
+                        })
+
+                    }
                 </MapView>
             </View>
         )
@@ -95,7 +113,7 @@ var styles = StyleSheet.create({
     },
     map: {
         position: 'absolute',
-        top: 0,
+        top: 60,
         left: 0,
         right: 0,
         bottom: 0,

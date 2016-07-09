@@ -10,7 +10,8 @@ var Redux = require('redux');
 const initialAppState = {
     showSpinner: false,
     navigateTo: "eventsListView",
-    currentEvent: null
+    needFetchData: true,
+    currentEvent: null,
 };
 
 function app(state=initialAppState, action) {
@@ -21,7 +22,8 @@ function app(state=initialAppState, action) {
             });
         case ActionTypes.FETCH_EVENTS_REQUEST_SUCCEED:
             return Object.assign({}, state, {
-                showSpinner: false
+                showSpinner: false,
+                needFetchData: false
             });
         case ActionTypes.ADD_NEW_EVENT_REQUEST_SUCCEED:
             return Object.assign({}, state, {
